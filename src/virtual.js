@@ -38,8 +38,6 @@ function useVirtualizerBase(options) {
     watch(
         () => unref(options),
         (options) => {
-            console.log("options", options);
-
             virtualizer.setOptions({
                 ...options,
                 onChange: (instance) => {
@@ -62,7 +60,6 @@ function useVirtualizerBase(options) {
 }
 
 export function useVirtualizer(options) {
-    console.log("virtualizer options", options, unref(options));
     return useVirtualizerBase(
         computed(() => ({
             observeElementRect: observeElementRect,

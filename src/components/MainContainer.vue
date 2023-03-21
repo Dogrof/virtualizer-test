@@ -1,78 +1,58 @@
 <template>
-  <div
-      ref="filterScrollContainer"
-      class="virtual-container"
-  >
     <div
-        :style="{
-          position: 'relative',
-        }"
+            ref="filterScrollContainer"
+            class="virtual-container"
     >
-      <div class="virtual-row" v-for="(virtualRow) in virtualItemsRow" :key="virtualRow.index">
-        <div class="virtual-col" v-for="(virtualColumn) in virtualItemsCol" :key="virtualColumn.index">
-          <div
-              class="virtual-cell"
-              :key="virtualColumn.index"
-              :style="{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: `${virtualColumn.size}px`,
-                height: `${virtualRow.size}px`,
-                transform: `translateX(${virtualColumn.start}px) translateY(${virtualRow.start}px)`,
-              }"
-          >
-                <SingleItem
-                  class="virtual-item"
-                  v-for="item of virtualItemsRow"
-                  :key="item.key"
-                />
-          </div>
+        <div
+                :style="{
+                  position: 'relative',
+                }"
+        >
+            <div class="virtual-row" v-for="(virtualRow) in virtualItemsRow" :key="virtualRow.index">
+                <div class="virtual-col" v-for="(virtualItem) in virtualItemsCol" :key="virtualItem.index">
+                    <SingleItem
+                            class="virtual-item"
+                            :style="{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                width: `${virtualItem.size}px`,
+                                height: `${virtualRow.size}px`,
+                                transform: `translateX(${virtualItem.start}px) translateY(${virtualRow.start}px)`,
+                              }"
+                            :size="100"
+                    />
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
 
-  </div>
+    </div>
 </template>
 
 <script>
-import { ref, computed } from "vue";
-import { useVirtualizer } from "../virtual";
-import { randomizeColor } from "@/helpers/itemHelper"
+import {ref, computed} from "vue";
+import {useVirtualizer} from "../virtual";
 import SingleItem from "@/components/SingleItem.vue";
 
 export default {
   components: {SingleItem},
   setup() {
-    const addItems = ref(false);
-
-    const fullItems = Array.from({ length: 100000 }, (_, i) => ({
-      label: `${i}`,
-      color: randomizeColor(),
-      value: i,
-    }));
-    const items = computed(() => {
-      return fullItems;
-    });
-
     const filterScrollContainer = ref(null);
     const rowVirtualizer = computed(() => {
       return {
-        count: 1000,
+        count: 100000,
         getScrollElement: () => filterScrollContainer.value,
-        estimateSize: () => 130,
+        estimateSize: () => 100,
         overscan: 5,
-        debug: true,
       };
     });
     const columnVirtualizer = computed(() => {
       return {
         horizontal: true,
-        count: 10000,
+        count: 100000,
         getScrollElement: () => filterScrollContainer.value,
-        estimateSize: () => 265,
+        estimateSize: () => 100,
         overscan: 5,
-        debug: true,
       };
     });
 
@@ -83,10 +63,6 @@ export default {
     const virtualItemsCol = computed(() => virtualizerCol.value.getVirtualItems());
 
     return {
-      columnVirtualizer,
-      rowVirtualizer,
-      addItems,
-      items,
       virtualItemsRow,
       virtualItemsCol,
       filterScrollContainer,
@@ -98,18 +74,20 @@ export default {
 
 <style>
 body {
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
 }
+
 .virtual-container {
-  height: 100vh;
-  width: 100%;
-  overflow: auto;
+    height: 100vh;
+    width: 100%;
+    overflow: auto;
 }
+
 .virtual-cell {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
 }
 </style>

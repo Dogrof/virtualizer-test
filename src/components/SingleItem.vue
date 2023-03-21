@@ -1,60 +1,52 @@
 <template>
-  <div class="single-item">
-    <svg
-        :height="height"
-        :width="width"
-        @click="isPopupShown = !isPopupShown"
-    >
-      <circle
-          :cx="20"
-          :cy="20"
-          :r="radius"
-          :fill="updatedColor || color"
-      />
-
-    </svg>
-    <div class="single-item__popup" v-if="isPopupShown">{{updatedColor || color}}</div>
-  </div>
+    <div class="single-item" v-bind="$attrs">
+        <svg
+                :height="size"
+                :width="size"
+                @click="isPopupShown = !isPopupShown"
+        >
+            <circle
+                    cx="50%"
+                    cy="50%"
+                    :r="(size - 30) / 2"
+                    :fill="color"
+            />
+        </svg>
+        <div class="single-item__popup" v-if="isPopupShown">{{ color }}</div>
+    </div>
 
 </template>
 
-<script >
+<script>
 import {randomizeColor} from "@/helpers/itemHelper";
+
+let interval;
 
 export default {
   data() {
     return {
-      updatedColor: '',
-      isPopupShown: false
+      isPopupShown: false,
+      color: randomizeColor()
     };
   },
   props: {
-    width: {
+    size: {
       type: Number,
-      default: 40,
-    },
-    height: {
-      type: Number,
-      default: 40,
-    },
-    radius: {
-      type: Number,
-      default: 10,
-    },
-    color: {
-      type: String,
-      default: 'white'
+      default: 100,
     },
   },
-  created() {
-    setInterval(() => {
-      this.updatedColor = randomizeColor();
+  beforeMount() {
+    interval = setInterval(() => {
+      this.color = randomizeColor();
     }, 1000);
   },
+  beforeUnmount() {
+    clearInterval(interval);
+  }
 };
 </script>
 <style scoped lang="scss">
-.single-item{
+.single-item {
   position: relative;
   width: 44px;
   height: 44px;
@@ -69,6 +61,7 @@ export default {
     left: 25px;
   }
 }
+
 svg {
   cursor: pointer;
   transition: transform 0.2s;
